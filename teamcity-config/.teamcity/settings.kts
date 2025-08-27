@@ -288,45 +288,38 @@ project {
                 scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
             
-            // Deploy to Render
+            // Deploy to Render via Deploy Hook
             script {
-                name = "Deploy to Render"
+                name = "Deploy to Render via Deploy Hook"
                 scriptContent = """
                     #!/bin/bash
-                    echo "Deploying to Render..."
+                    echo "Deploying to Render via deploy hook..."
                     source venv/bin/activate
                     
                     # Set deployment environment variables
-                    export RENDER_TOKEN="${RENDER_TOKEN}"
-                    export RENDER_SERVICE_ID="${RENDER_SERVICE_ID}"
+                    export RENDER_DEPLOY_HOOK="${RENDER_DEPLOY_HOOK}"
                     
-                    # Create deployment package
-                    mkdir -p deploy
-                    cp -r teamOKITO/* deploy/
-                    cp teamOKITO/requirements.txt deploy/
-                    
-                    # Add render.yaml for Render configuration
-                    cat > deploy/render.yaml << EOF
-                    services:
-                      - type: web
-                        name: configuration-as-code-demo
-                        env: python
-                        buildCommand: pip install -r requirements.txt
-                        startCommand: python app.py
-                        envVars:
-                          - key: PYTHON_VERSION
-                            value: 3.9.0
-                          - key: BUILD_NUMBER
-                            value: ${BUILD_NUMBER}
-                          - key: DEPLOYMENT_DATE
-                            value: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
-                    EOF
-                    
-                    echo "Deployment package created"
                     echo "Build Number: ${BUILD_NUMBER}"
                     echo "Deployment Date: $(date -u +"%Y-%m-%dT%H:%M:%SZ")"
                     
-                    # In a real deployment, you would use Render CLI or API
+                    # Trigger Render deployment via deploy hook
+                    echo "Triggering Render deployment..."
+                    DEPLOY_RESPONSE=$(curl -s -X POST "${RENDER_DEPLOY_HOOK}")
+                    
+                    if [ $? -eq 0 ]; then
+                        echo "Deployment triggered successfully!"
+                        echo "Response: ${DEPLOY_RESPONSE}"
+                        
+                        # Extract deployment ID from response
+                        DEPLOY_ID=$(echo "${DEPLOY_RESPONSE}" | grep -o '"id":"[^"]*"' | cut -d'"' -f4)
+                        if [ ! -z "${DEPLOY_ID}" ]; then
+                            echo "Deployment ID: ${DEPLOY_ID}"
+                        fi
+                    else
+                        echo "Failed to trigger deployment"
+                        exit 1
+                    fi
+                    
                     echo "Deployment to Render completed successfully"
                 """.trimIndent()
                 scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
@@ -369,8 +362,7 @@ project {
         
         // Parameters for Render deployment
         params {
-            param("RENDER_TOKEN", "")
-            param("RENDER_SERVICE_ID", "")
+            param("RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ni6i7fte5s739g34q0?key=hLoCv29o1Ew")
             param("DEPLOYMENT_ENVIRONMENT", "production")
         }
     }

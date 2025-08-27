@@ -286,6 +286,97 @@
             transform: scale(1.1);
             box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
         }
+
+        /* Pipeline Visualization Styles */
+        .pipeline-visualization {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            margin: 2rem 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .pipeline-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 2rem;
+        }
+
+        .pipeline-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 2rem 0;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .pipeline-step-visual {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .step-visual-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .step-visual-icon.local { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .step-visual-icon.github { background: linear-gradient(135deg, #24292e, #1b1f23); }
+        .step-visual-icon.teamcity { background: linear-gradient(135deg, #4CAF50, #45a049); }
+        .step-visual-icon.render { background: linear-gradient(135deg, #667eea, #764ba2); }
+
+        .step-visual-name {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .step-visual-desc {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            line-height: 1.4;
+            max-width: 120px;
+        }
+
+        .pipeline-arrow {
+            font-size: 2rem;
+            color: #3498db;
+            margin: 0 0.5rem;
+            animation: flow 2s infinite;
+        }
+
+        @keyframes flow {
+            0% { transform: translateX(0); opacity: 0.7; }
+            50% { transform: translateX(5px); opacity: 1; }
+            100% { transform: translateX(0); opacity: 0.7; }
+        }
+
+        @media (max-width: 768px) {
+            .pipeline-flow {
+                flex-direction: column;
+            }
+            
+            .pipeline-arrow {
+                transform: rotate(90deg);
+                margin: 0.5rem 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -299,6 +390,60 @@
                 <div class="tech-tag">TeamCity CI/CD</div>
                 <div class="tech-tag">Render Hosting</div>
                 <div class="tech-tag">Python Flask</div>
+            </div>
+
+            <!-- Pipeline Visualization -->
+            <div class="pipeline-visualization">
+                <h2 class="pipeline-title">Configuration as Code Pipeline Flow</h2>
+                <div class="pipeline-flow">
+                    <div class="pipeline-step-visual">
+                        <div class="step-visual-icon local">💻</div>
+                        <div class="step-visual-name">Local Machine</div>
+                        <div class="step-visual-desc">Develop and test code locally with version control</div>
+                    </div>
+                    
+                    <div class="pipeline-arrow">→</div>
+                    
+                    <div class="pipeline-step-visual">
+                        <div class="step-visual-icon github">📚</div>
+                        <div class="step-visual-name">GitHub</div>
+                        <div class="step-visual-desc">Store code and configuration files in version control</div>
+                    </div>
+                    
+                    <div class="pipeline-arrow">→</div>
+                    
+                    <div class="pipeline-step-visual">
+                        <div class="step-visual-icon teamcity">🏭</div>
+                        <div class="step-visual-name">TeamCity</div>
+                        <div class="step-visual-desc">Automated CI/CD pipeline with Configuration as Code</div>
+                    </div>
+                    
+                    <div class="pipeline-arrow">→</div>
+                    
+                    <div class="pipeline-step-visual">
+                        <div class="step-visual-icon render">🚀</div>
+                        <div class="step-visual-name">Render</div>
+                        <div class="step-visual-desc">Automated deployment to production hosting</div>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin-top: 2rem; padding: 1rem; background: #f8f9fa; border-radius: 10px;">
+                    <h3 style="color: #2c3e50; margin-bottom: 1rem;">How It Works:</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; text-align: left;">
+                        <div>
+                            <strong>💻 Local Development:</strong> Write code and configuration files locally, test with Flask development server
+                        </div>
+                        <div>
+                            <strong>📚 GitHub Push:</strong> Commit and push changes to GitHub repository, triggering TeamCity builds
+                        </div>
+                        <div>
+                            <strong>🏭 TeamCity Pipeline:</strong> Automated testing, code quality checks, and deployment orchestration
+                        </div>
+                        <div>
+                            <strong>🚀 Render Deployment:</strong> Automatic deployment to production with zero downtime
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
