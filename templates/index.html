@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configuration as Code Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 32px rgba(76, 175, 80, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .success-icon::before {
+            content: "✓";
+            color: white;
+            font-size: 3rem;
+            font-weight: bold;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .success-icon::after {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            font-weight: 400;
+            margin-bottom: 2rem;
+        }
+
+        .tech-tags {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .tech-tag {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .tech-tag:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .build-info-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #3498db;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            font-weight: 500;
+        }
+
+        .info-value {
+            font-size: 1rem;
+            color: #2c3e50;
+            font-weight: 600;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+        }
+
+        .pipeline-card {
+            background: white;
+            border-radius: 16px;
+            padding: 2rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .pipeline-steps {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .pipeline-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .step-icon.build { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+        .step-icon.test { background: linear-gradient(135deg, #3498db, #2980b9); }
+        .step-icon.package { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .step-icon.deploy { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+
+        .pipeline-step:hover .step-icon {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+        }
+
+        .step-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9rem;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            font-style: italic;
+        }
+
+        .status-indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #2ecc71;
+            display: inline-block;
+            margin-right: 0.5rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .tech-tags {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .pipeline-steps {
+                gap: 1rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .refresh-button {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .refresh-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="success-icon"></div>
+            <h1 class="title">Configuration as Code Demo</h1>
+            <p class="subtitle">CI/CD Pipeline Successfully Deployed</p>
+            
+            <div class="tech-tags">
+                <div class="tech-tag">TeamCity CI/CD</div>
+                <div class="tech-tag">Render Hosting</div>
+                <div class="tech-tag">Python Flask</div>
+            </div>
+        </div>
+
+        <div class="build-info-card">
+            <div class="card-title">
+                <div class="card-icon">📊</div>
+                Build Information
+            </div>
+            <div class="info-grid">
+                <div class="info-item">
+                    <span class="info-label">Build Number:</span>
+                    <span class="info-value">{{ build_info.build_number }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Deployment Date:</span>
+                    <span class="info-value">{{ build_info.deployment_date }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Repository:</span>
+                    <span class="info-value">{{ build_info.repository }}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Configuration:</span>
+                    <span class="info-value">{{ build_info.configuration }}</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="pipeline-card">
+            <div class="card-title">
+                <div class="card-icon">🚀</div>
+                Deployment Pipeline Steps
+            </div>
+            <div class="pipeline-steps">
+                {% for step in pipeline.steps %}
+                <div class="pipeline-step">
+                    <div class="step-icon {{ step.name.lower() }}">
+                        {{ step.icon }}
+                    </div>
+                    <span class="step-name">{{ step.name }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="footer">
+            <span class="status-indicator"></span>
+            Every aspect of this deployment pipeline is defined in code and version controlled.
+        </div>
+    </div>
+
+    <button class="refresh-button" onclick="refreshStatus()" title="Refresh Status">
+        🔄
+    </button>
+
+    <script>
+        function refreshStatus() {
+            const button = document.querySelector('.refresh-button');
+            button.style.transform = 'rotate(360deg)';
+            
+            fetch('/api/build-status')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Build status updated:', data);
+                    // In a real app, you might update the UI with new data
+                })
+                .catch(error => {
+                    console.error('Error fetching build status:', error);
+                })
+                .finally(() => {
+                    setTimeout(() => {
+                        button.style.transform = 'rotate(0deg)';
+                    }, 500);
+                });
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(refreshStatus, 30000);
+
+        // Add some interactive effects
+        document.querySelectorAll('.tech-tag').forEach(tag => {
+            tag.addEventListener('click', function() {
+                this.style.transform = 'scale(0.95)';
+                setTimeout(() => {
+                    this.style.transform = 'scale(1)';
+                }, 150);
+            });
+        });
+
+        // Add loading animation for pipeline steps
+        document.querySelectorAll('.pipeline-step').forEach((step, index) => {
+            step.style.opacity = '0';
+            step.style.transform = 'translateY(20px)';
+            
+            setTimeout(() => {
+                step.style.transition = 'all 0.6s ease';
+                step.style.opacity = '1';
+                step.style.transform = 'translateY(0)';
+            }, index * 200);
+        });
+    </script>
+</body>
+</html>
