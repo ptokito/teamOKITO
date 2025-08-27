@@ -34,7 +34,7 @@ project {
     
     // Build Configuration 1: Python Setup and Test
     buildType {
-        id = "PythonSetupAndTest"
+        id = AbsoluteId("PythonSetupAndTest")
         name = "Python Setup and Test"
         description = "Sets up Python environment and runs tests for the Flask application"
         
@@ -58,7 +58,7 @@ project {
                     pip install -r requirements.txt
                     echo "Python environment setup completed"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
             
             // Run Python Tests
@@ -71,7 +71,7 @@ project {
                     python -m pytest tests/ -v --tb=short
                     echo "Tests completed"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
             
             // Code Quality Check
@@ -86,7 +86,7 @@ project {
                     black --check teamOKITO/
                     echo "Code quality checks completed"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
             
             // Test Application Startup (Quick Test)
@@ -115,7 +115,7 @@ project {
                         exit 1
                     fi
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
         }
         
@@ -178,7 +178,7 @@ project {
     
     // Build Configuration 2: Flask Application Build
     buildType {
-        id = "FlaskAppBuild"
+        id = AbsoluteId("FlaskAppBuild")
         name = "Flask Application Build"
         description = "Builds and packages the Flask application for deployment"
         
@@ -202,7 +202,7 @@ project {
                     pip install -r requirements.txt
                     echo "Python environment setup completed"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
             
             // Build Application
@@ -228,7 +228,7 @@ project {
                     echo "Flask application build completed"
                     echo "Package: flask-app-${BUILD_NUMBER}.tar.gz"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
             
             // Test Application Startup
@@ -258,7 +258,7 @@ project {
                         exit 1
                     fi
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
         }
         
@@ -299,7 +299,7 @@ project {
     
     // Build Configuration 3: Deploy to Render
     buildType {
-        id = "DeployToRender"
+        id = AbsoluteId("DeployToRender")
         name = "Deploy to Render"
         description = "Deploys the Flask application to Render hosting platform"
         
@@ -323,7 +323,7 @@ project {
                     pip install -r requirements.txt
                     echo "Python environment setup completed"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
             
             // Deploy to Render via Deploy Hook
@@ -360,7 +360,7 @@ project {
                     
                     echo "Deployment to Render completed successfully"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
         }
         
@@ -416,7 +416,7 @@ project {
     
     // Main Pipeline Build Configuration
     buildType {
-        id = "FullPipeline"
+        id = AbsoluteId("FullPipeline")
         name = "Full CI/CD Pipeline"
         description = "Runs the complete pipeline: Test → Build → Deploy to Render"
         
@@ -441,7 +441,7 @@ project {
                     echo ""
                     echo "Pipeline orchestration completed successfully!"
                 """.trimIndent()
-                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+                executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
         }
         
