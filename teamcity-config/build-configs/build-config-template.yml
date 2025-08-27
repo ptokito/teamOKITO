@@ -1,0 +1,88 @@
+# TeamCity Build Configuration Template - YAML Format
+# This demonstrates an alternative approach to Configuration as Code using YAML
+#
+# Benefits of YAML approach:
+# - Human-readable format
+# - Less verbose than XML
+# - Good for configuration management tools
+# - Easy to parse and generate
+
+buildType:
+  id: "BuildConfigTemplate"
+  name: "Build Configuration Template"
+  description: "Template for creating new build configurations"
+  
+  # VCS Settings
+  vcs:
+    root: "GitRepo"
+    cleanCheckout: true
+  
+  # Build Steps
+  steps:
+    # Maven Build Step
+    - maven:
+        name: "Maven Build"
+        goals: "clean compile test"
+        jvmArgs: "-Xmx2048m"
+        mavenVersion: "bundled"
+    
+    # Custom Script Step
+    - script:
+        name: "Custom Script"
+        scriptContent: |
+          #!/bin/bash
+          echo "Custom build step executed"
+          echo "Build timestamp: $(date)"
+          echo "Build number: $BUILD_NUMBER"
+        scriptExecMode: "RUN_ON_FAILURE"
+  
+  # Build Triggers
+  triggers:
+    - vcs:
+        branchFilter: "+:*"
+        groupCheckinsByCommitter: true
+        perCheckinTriggering: true
+  
+  # Build Features
+  features:
+    # Build History
+    - buildHistory:
+        maxResults: 50
+    
+    # Notifications
+    - notifications:
+        email:
+          recipients: "team@example.com"
+          notifyBuildStart: true
+          notifyBuildSuccess: true
+          notifyBuildFailure: true
+  
+  # Failure Conditions
+  failureConditions:
+    - executionTimeout:
+        timeoutMinutes: 30
+    - exitCode:
+        exitCode: 0
+  
+  # Dependencies
+  dependencies:
+    - snapshot:
+        sourceBuildTypeId: "GitRepo"
+        onDependencyFailure: "FAIL_TO_START"
+  
+  # Parameters
+  parameters:
+    - param:
+        name: "BUILD_TIMEOUT"
+        value: "30"
+        description: "Build timeout in minutes"
+    
+    - param:
+        name: "MAVEN_GOALS"
+        value: "clean compile test"
+        description: "Maven goals to execute"
+    
+    - param:
+        name: "NOTIFICATION_EMAILS"
+        value: "team@example.com"
+        description: "Email addresses for notifications"
