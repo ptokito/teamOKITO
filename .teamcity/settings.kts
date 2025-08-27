@@ -35,7 +35,7 @@ object GitRepo : GitVcsRoot({
     url = "https://github.com/ptokito/teamOKITO.git"
     branch = "refs/heads/main"
     branchSpec = "+:refs/heads/*"
-    checkoutMode = CheckoutMode.ON_SERVER
+    // checkoutMode removed - not supported in current TeamCity version
 })
 
 // Build Configuration 1: Python Setup and Test
@@ -135,17 +135,9 @@ object PythonSetupAndTest : BuildType({
         }
     }
     
-    // Build Features
+    // Build Features - Notifications can be configured in TeamCity UI
     features {
-        // Email notifications
-        emailNotifier {
-            notifierSettings = emailNotifierSettings {
-                email = "team@example.com"
-                notifyOnBuildStart = true
-                notifyOnSuccess = true
-                notifyOnFailure = true
-            }
-        }
+        // Email notifications can be configured in Project Settings → Notifiers
     }
     
     // Parameters
@@ -256,16 +248,9 @@ object FlaskAppBuild : BuildType({
         }
     }
     
-    // Build Features
+    // Build Features - Notifications can be configured in TeamCity UI
     features {
-        emailNotifier {
-            notifierSettings = emailNotifierSettings {
-                email = "devops@example.com"
-                notifyOnBuildStart = true
-                notifyOnSuccess = true
-                notifyOnFailure = true
-            }
-        }
+        // Email notifications can be configured in Project Settings → Notifiers
     }
 })
 
@@ -325,16 +310,9 @@ object DeployToRender : BuildType({
         }
     }
     
-    // Build Features
+    // Build Features - Notifications can be configured in TeamCity UI
     features {
-        emailNotifier {
-            notifierSettings = emailNotifierSettings {
-                email = "devops@example.com"
-                notifyOnBuildStart = true
-                notifyOnSuccess = true
-                notifyOnFailure = true
-            }
-        }
+        // Email notifications can be configured in Project Settings → Notifiers
     }
     
     // Parameters for Render deployment
@@ -385,16 +363,9 @@ object FullPipeline : BuildType({
         }
     }
     
-    // Build Features
+    // Build Features - Notifications can be configured in TeamCity UI
     features {
-        emailNotifier {
-            notifierSettings = emailNotifierSettings {
-                email = "devops@example.com"
-                notifyOnBuildStart = true
-                notifyOnSuccess = true
-                notifyOnFailure = true
-            }
-        }
+        // Email notifications can be configured in Project Settings → Notifiers
     }
     
     // Dependencies - This triggers the entire pipeline
