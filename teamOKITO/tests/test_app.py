@@ -9,6 +9,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from app import app
 
+
 class ConfigurationAsCodeDemoTestCase(unittest.TestCase):
     def setUp(self):
         self.app = app.test_client()
@@ -25,7 +26,7 @@ class ConfigurationAsCodeDemoTestCase(unittest.TestCase):
         """Test the build status API endpoint"""
         response = self.app.get('/api/build-status')
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.data)
         self.assertIn('status', data)
         self.assertIn('build_number', data)
@@ -36,7 +37,7 @@ class ConfigurationAsCodeDemoTestCase(unittest.TestCase):
         """Test the configuration API endpoint"""
         response = self.app.get('/api/configuration')
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.data)
         self.assertIn('project_id', data)
         self.assertIn('build_types', data)
@@ -46,7 +47,7 @@ class ConfigurationAsCodeDemoTestCase(unittest.TestCase):
         """Test the health check endpoint"""
         response = self.app.get('/health')
         self.assertEqual(response.status_code, 200)
-        
+
         data = json.loads(response.data)
         self.assertEqual(data['status'], 'healthy')
         self.assertIn('timestamp', data)
@@ -64,7 +65,7 @@ class ConfigurationAsCodeDemoTestCase(unittest.TestCase):
             import importlib
             import app
             importlib.reload(app)
-            
+
             response = self.app.get('/')
             self.assertIn(b'TEST-123', response.data)
             self.assertIn(b'2024-01-01', response.data)
@@ -83,6 +84,7 @@ class ConfigurationAsCodeDemoTestCase(unittest.TestCase):
         self.assertIn(b'TeamCity CI/CD', response.data)
         self.assertIn(b'Render Hosting', response.data)
         self.assertIn(b'Python Flask', response.data)
+
 
 if __name__ == '__main__':
     unittest.main()

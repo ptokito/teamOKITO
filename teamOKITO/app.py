@@ -1,10 +1,10 @@
 from flask import Flask, render_template, jsonify
 import os
 from datetime import datetime
-import subprocess
-import json
+
 
 app = Flask(__name__)
+
 
 class BuildInfo:
     def __init__(self):
@@ -13,11 +13,13 @@ class BuildInfo:
         self.repository = os.getenv('REPOSITORY', 'github.com/ptokito/teamcityjava')
         self.configuration = os.getenv('CONFIGURATION', '.teamcity/settings.kts')
 
+
 class PipelineStep:
     def __init__(self, name, icon, status="success"):
         self.name = name
         self.icon = icon
         self.status = status
+
 
 class DeploymentPipeline:
     def __init__(self):
@@ -28,14 +30,16 @@ class DeploymentPipeline:
             PipelineStep("Deploy", "🚀", "success")
         ]
 
+
 @app.route('/')
 def index():
     build_info = BuildInfo()
     pipeline = DeploymentPipeline()
-    
-    return render_template('index.html', 
-                         build_info=build_info, 
+
+    return render_template('index.html',
+                         build_info=build_info,
                          pipeline=pipeline)
+
 
 @app.route('/api/build-status')
 def build_status():
@@ -43,7 +47,7 @@ def build_status():
     try:
         # Simulate checking on the build status
         # Configuration as Code Demo - TeamCity Pipeline Integration
-        # In a real implementation, this would query TeamCity API 
+        # In a real implementation, this would query TeamCity API
         status = {
             "status": "success",
             "last_build": datetime.now().isoformat(),
@@ -58,6 +62,7 @@ def build_status():
         return jsonify(status)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/configuration')
 def get_configuration():
@@ -96,6 +101,7 @@ def get_configuration():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+
 @app.route('/health')
 def health_check():
     """Health check endpoint for monitoring"""
@@ -105,11 +111,12 @@ def health_check():
         "version": "1.0.0"
     })
 
+
 if __name__ == '__main__':
     # Set environment variables for demo purposes
     os.environ['BUILD_NUMBER'] = os.getenv('BUILD_NUMBER', 'Local Dev')
     os.environ['DEPLOYMENT_DATE'] = os.getenv('DEPLOYMENT_DATE', 'Unknown')
     os.environ['REPOSITORY'] = os.getenv('REPOSITORY', 'github.com/ptokito/teamcityjava')
     os.environ['CONFIGURATION'] = os.getenv('CONFIGURATION', '.teamcity/settings.kts')
-    
+
     app.run(debug=True, host='0.0.0.0', port=5000)
