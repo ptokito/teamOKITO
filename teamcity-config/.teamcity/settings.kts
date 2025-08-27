@@ -88,6 +88,35 @@ project {
                 """.trimIndent()
                 scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
             }
+            
+            // Test Application Startup (Quick Test)
+            script {
+                name = "Test Application Startup"
+                scriptContent = """
+                    #!/bin/bash
+                    echo "Testing Flask application startup..."
+                    source venv/bin/activate
+                    
+                    # Test if the app can start (quick test)
+                    timeout 30s python teamOKITO/app.py &
+                    APP_PID=$!
+                    
+                    # Wait for app to start
+                    sleep 5
+                    
+                    # Test if app is responding
+                    if curl -f http://localhost:5000/ > /dev/null 2>&1; then
+                        echo "Application started successfully"
+                        kill $APP_PID 2>/dev/null
+                        exit 0
+                    else
+                        echo "Application failed to start or respond"
+                        kill $APP_PID 2>/dev/null
+                        exit 1
+                    fi
+                """.trimIndent()
+                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+            }
         }
         
         // Build Triggers
@@ -132,8 +161,17 @@ project {
         
         // Dependencies
         dependencies {
-            snapshot(RelativeId("GitRepo")) {
+            snapshot(RelativeId("PythonSetupAndTest")) {
                 onDependencyFailure = FailureAction.FAIL_TO_START
+            }
+        }
+        
+        // Trigger the next build in the pipeline
+        triggers {
+            vcs {
+                branchFilter = "+:refs/heads/main"
+                groupCheckinsByCommitter = true
+                perCheckinTriggering = false
             }
         }
     }
@@ -360,10 +398,85 @@ project {
             }
         }
         
+        // Trigger the next build in the pipeline
+        triggers {
+            vcs {
+                branchFilter = "+:refs/heads/main"
+                groupCheckinsByCommitter = true
+                perCheckinTriggering = false
+            }
+        }
+        
         // Parameters for Render deployment
         params {
             param("RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ni6i7fte5s739g34q0?key=hLoCv29o1Ew")
             param("DEPLOYMENT_ENVIRONMENT", "production")
+        }
+    }
+    
+    // Main Pipeline Build Configuration
+    buildType {
+        id = "FullPipeline"
+        name = "Full CI/CD Pipeline"
+        description = "Runs the complete pipeline: Test → Build → Deploy to Render"
+        
+        // VCS Settings
+        vcs {
+            root(AbsoluteId("GitRepo"))
+            cleanCheckout = true
+        }
+        
+        // Build Steps - This build just triggers the pipeline
+        steps {
+            script {
+                name = "Pipeline Orchestration"
+                scriptContent = """
+                    #!/bin/bash
+                    echo "Starting full CI/CD pipeline..."
+                    echo "Build Number: ${BUILD_NUMBER}"
+                    echo "Pipeline will run:"
+                    echo "1. Python Setup and Test"
+                    echo "2. Flask Application Build"
+                    echo "3. Deploy to Render"
+                    echo ""
+                    echo "Pipeline orchestration completed successfully!"
+                """.trimIndent()
+                scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
+            }
+        }
+        
+        // Build Triggers - This is the main entry point
+        triggers {
+            vcs {
+                branchFilter = "+:refs/heads/main"
+                groupCheckinsByCommitter = true
+                perCheckinTriggering = true
+            }
+        }
+        
+        // Build Features
+        features {
+            // Build History
+            buildHistory {
+                maxResults = 20
+            }
+            
+            // Notifications
+            notifications {
+                notifierSettings = email {
+                    recipients = "devops@example.com"
+                    notifyBuildStart = true
+                    notifyBuildSuccess = true
+                    notifyBuildFailure = true
+                }
+            }
+        }
+        
+        // Dependencies - This triggers the entire pipeline
+        dependencies {
+            snapshot(RelativeId("PythonSetupAndTest")) {
+                onDependencyFailure = FailureAction.FAIL_TO_START
+            }
         }
     }
 }
