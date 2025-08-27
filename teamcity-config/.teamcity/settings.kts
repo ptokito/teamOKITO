@@ -15,8 +15,8 @@ import jetbrains.buildServer.configs.kotlin.triggers.vcs
 version = "2023.05"
 
 project {
-    id = AbsoluteId("CacDemoProject")
-    name = "Configuration as Code Demo"
+    id = AbsoluteId("TeamOKITO")
+    name = "TeamOKITO"
     description = "Demonstrating TeamCity Configuration as Code capabilities with a Python Flask application"
     
     // Build number format
