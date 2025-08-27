@@ -2,6 +2,7 @@ import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.triggers.*
 import jetbrains.buildServer.configs.kotlin.vcs.*
+import jetbrains.buildServer.configs.kotlin.triggers.VcsTrigger.QuietPeriodMode
 
 version = "2023.05"
 
@@ -18,6 +19,9 @@ object GitRepo : GitVcsRoot({
     url = "https://github.com/ptokito/teamOKITO.git"
     branch = "refs/heads/main"
     branchSpec = "+:refs/heads/*"
+    
+    pollingInterval = 10
+    useMirrors = false
 })
 
 object FullCiCdPipeline : BuildType({
@@ -141,8 +145,15 @@ object FullCiCdPipeline : BuildType({
     triggers {
         vcs {
             branchFilter = "+:refs/heads/main"
-            groupCheckinsByCommitter = true
+            groupCheckinsByCommitter = false
             perCheckinTriggering = true
+            quietPeriodMode = QuietPeriodMode.DO_NOT_USE
+            triggerRules = "-:comment=^\\[skip ci\\]"
+        }
+        
+        webhook {
+            param("url", "teamcity")
+            param("branch", "refs/heads/main")
         }
     }
     
