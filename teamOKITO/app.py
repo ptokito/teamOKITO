@@ -41,8 +41,9 @@ def index():
 def build_status():
     """API endpoint to get current build status"""
     try:
-        # Simulate checking build status
-        # In a real implementation, this would query TeamCity API
+        # Simulate checking on the build status
+        # Configuration as Code Demo - TeamCity Pipeline Integration
+        # In a real implementation, this would query TeamCity API 
         status = {
             "status": "success",
             "last_build": datetime.now().isoformat(),
