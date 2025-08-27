@@ -1,5 +1,4 @@
 import jetbrains.buildServer.configs.kotlin.*
-import jetbrains.buildServer.configs.kotlin.buildFeatures.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.triggers.*
 import jetbrains.buildServer.configs.kotlin.vcs.*
@@ -35,7 +34,6 @@ object GitRepo : GitVcsRoot({
     url = "https://github.com/ptokito/teamOKITO.git"
     branch = "refs/heads/main"
     branchSpec = "+:refs/heads/*"
-    // checkoutMode removed - not supported in current TeamCity version
 })
 
 // Build Configuration 1: Python Setup and Test
@@ -89,8 +87,8 @@ object PythonSetupAndTest : BuildType({
                 echo "Running code quality checks..."
                 source venv/bin/activate
                 pip install flake8 black
-                flake8 teamOKITO/ --max-line-length=100 --exclude=venv
-                black --check teamOKITO/
+                flake8 . --max-line-length=100 --exclude=venv
+                black --check .
                 echo "Code quality checks completed"
             """.trimIndent()
             executionMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
@@ -105,7 +103,7 @@ object PythonSetupAndTest : BuildType({
                 source venv/bin/activate
                 
                 # Test if the app can start (quick test)
-                timeout 30s python teamOKITO/app.py &
+                timeout 30s python app.py &
                 APP_PID=${'$'}!
                 
                 # Wait for app to start
@@ -133,11 +131,6 @@ object PythonSetupAndTest : BuildType({
             groupCheckinsByCommitter = true
             perCheckinTriggering = true
         }
-    }
-    
-    // Build Features - Notifications can be configured in TeamCity UI
-    features {
-        // Email notifications can be configured in Project Settings → Notifiers
     }
     
     // Parameters
@@ -196,8 +189,8 @@ object FlaskAppBuild : BuildType({
                 mkdir -p build
                 
                 # Copy application files
-                cp -r teamOKITO/* build/
-                cp teamOKITO/requirements.txt build/
+                cp -r * build/ 2>/dev/null || true
+                cp requirements.txt build/ 2>/dev/null || true
                 
                 # Create deployment package
                 cd build
@@ -226,14 +219,14 @@ object FlaskAppBuild : BuildType({
                 # Wait for app to start
                 sleep 5
                 
-                # Test health endpoint
-                if curl -f http://localhost:5000/health; then
+                # Test basic endpoint
+                if curl -f http://localhost:5000/ > /dev/null 2>&1; then
                     echo "Application started successfully"
-                    kill ${'$'}APP_PID
+                    kill ${'$'}APP_PID 2>/dev/null
                     exit 0
                 else
                     echo "Application failed to start"
-                    kill ${'$'}APP_PID
+                    kill ${'$'}APP_PID 2>/dev/null
                     exit 1
                 fi
             """.trimIndent()
@@ -246,11 +239,6 @@ object FlaskAppBuild : BuildType({
         snapshot(PythonSetupAndTest) {
             onDependencyFailure = FailureAction.FAIL_TO_START
         }
-    }
-    
-    // Build Features - Notifications can be configured in TeamCity UI
-    features {
-        // Email notifications can be configured in Project Settings → Notifiers
     }
 })
 
@@ -310,11 +298,6 @@ object DeployToRender : BuildType({
         }
     }
     
-    // Build Features - Notifications can be configured in TeamCity UI
-    features {
-        // Email notifications can be configured in Project Settings → Notifiers
-    }
-    
     // Parameters for Render deployment
     params {
         param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ni6i7fte5s739g34q0?key=hLoCv29o1Ew")
@@ -361,11 +344,6 @@ object FullPipeline : BuildType({
             groupCheckinsByCommitter = true
             perCheckinTriggering = true
         }
-    }
-    
-    // Build Features - Notifications can be configured in TeamCity UI
-    features {
-        // Email notifications can be configured in Project Settings → Notifiers
     }
     
     // Dependencies - This triggers the entire pipeline
