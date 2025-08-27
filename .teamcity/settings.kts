@@ -43,6 +43,7 @@ object Build : BuildType({
     steps {
         python {
             id = "python_runner"
+            enabled = false
             workingDir = "teamOKITO"
             environment = venv {
             }
