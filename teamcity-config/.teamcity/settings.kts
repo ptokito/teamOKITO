@@ -40,7 +40,7 @@ project {
         
         // VCS Settings
         vcs {
-            root(AbsoluteId("GitRepo"))
+            // root(AbsoluteId("GitRepo"))  // Temporarily commented out for VCS root fix
             cleanCheckout = true
         }
         
@@ -184,7 +184,7 @@ project {
         
         // VCS Settings
         vcs {
-            root(AbsoluteId("GitRepo"))
+            // root(AbsoluteId("GitRepo"))  // Temporarily commented out for VCS root fix
             cleanCheckout = true
         }
         
@@ -305,7 +305,7 @@ project {
         
         // VCS Settings
         vcs {
-            root(AbsoluteId("GitRepo"))
+            // root(AbsoluteId("GitRepo"))  // Temporarily commented out for VCS root fix
             cleanCheckout = true
         }
         
@@ -422,7 +422,7 @@ project {
         
         // VCS Settings
         vcs {
-            root(AbsoluteId("GitRepo"))
+            // root(AbsoluteId("GitRepo"))  // Temporarily commented out for VCS root fix
             cleanCheckout = true
         }
         
