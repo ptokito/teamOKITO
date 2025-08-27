@@ -114,7 +114,7 @@ object FullCiCdPipeline : BuildType({
                 echo "=== STEP 5: Deploying to Render ==="
                 
                 echo "Build Number: %build.counter%"
-                echo "Deployment Date: ${'$'}(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+                echo "Deployment Date: ${'$'}(date -u)"
                 echo "Deploy Hook: %env.RENDER_DEPLOY_HOOK%"
                 
                 echo "Triggering Render deployment..."
