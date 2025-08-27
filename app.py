@@ -1,10 +1,10 @@
 from flask import Flask, render_template, jsonify
 import os
 from datetime import datetime
-import subprocess
-import json
+
 
 app = Flask(__name__)
+
 
 class BuildInfo:
     def __init__(self):
@@ -19,6 +19,7 @@ class PipelineStep:
         self.icon = icon
         self.status = status
 
+
 class DeploymentPipeline:
     def __init__(self):
         self.steps = [
@@ -32,16 +33,17 @@ class DeploymentPipeline:
 def index():
     build_info = BuildInfo()
     pipeline = DeploymentPipeline()
-    
-    return render_template('index.html', 
-                         build_info=build_info, 
+
+    return render_template('index.html',
+                         build_info=build_info,
                          pipeline=pipeline)
 
 @app.route('/api/build-status')
 def build_status():
     """API endpoint to get current build status"""
     try:
-        # Simulate checking build status
+        # Simulate checking on the build status
+        # Configuration as Code Demo - TeamCity Pipeline Integration
         # In a real implementation, this would query TeamCity API
         status = {
             "status": "success",
@@ -104,11 +106,12 @@ def health_check():
         "version": "1.0.0"
     })
 
+
 if __name__ == '__main__':
     # Set environment variables for demo purposes
     os.environ['BUILD_NUMBER'] = os.getenv('BUILD_NUMBER', 'Local Dev')
-    os.environ['DEPLOYMENT_DATE'] = os.getenv('DEPLOYMENT_DATE', 'Unknown')
+    os.environ['DEPLOYMENT_DATE'] = os.getenv('DEPLOYMENT_DATE', datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"))
     os.environ['REPOSITORY'] = os.getenv('REPOSITORY', 'github.com/ptokito/teamcityjava')
     os.environ['CONFIGURATION'] = os.getenv('CONFIGURATION', '.teamcity/settings.kts')
-    
+
     app.run(debug=True, host='0.0.0.0', port=5000)
