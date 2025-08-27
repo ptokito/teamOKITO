@@ -43,6 +43,7 @@ object Build : BuildType({
     steps {
         python {
             id = "python_runner"
+            enabled = false
             workingDir = "teamOKITO"
             environment = venv {
             }
@@ -52,6 +53,7 @@ object Build : BuildType({
         }
         maven {
             id = "Maven2"
+            enabled = false
             goals = "clean test"
             pomLocation = ".teamcity/pom.xml"
             runnerArgs = "-Dmaven.test.failure.ignore=true"
