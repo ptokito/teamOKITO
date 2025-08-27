@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: teamOKITO
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: cd teamOKITO && python app.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.0
+      - key: BUILD_NUMBER
+        value: ${BUILD_NUMBER}
+      - key: DEPLOYMENT_DATE
+        value: ${DEPLOYMENT_DATE}
