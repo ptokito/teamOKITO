@@ -9,7 +9,7 @@ import jetbrains.buildServer.configs.kotlin.triggers.vcs
  * Benefits:
  * - Version controlled configuration
  * - Type-safe configuration
- * - IDE support with autocomplete
+ * - IDE support with autocompletes
  * - Reusable configuration patterns
  */
 version = "2023.05"
@@ -19,11 +19,14 @@ project {
     name = "Configuration as Code Demo"
     description = "Demonstrating TeamCity Configuration as Code capabilities with a Python Flask application"
     
+    // Build number format
+    buildNumberPattern = "%build.counter%"
+    
     // VCS Root - Git repository configuration
     vcsRoot {
         id = "GitRepo"
         name = "Git Repository"
-        url = "https://github.com/ptokito/teamcityjava.git"
+        url = "https://github.com/ptokito/teamOKITO.git"
         branch = "refs/heads/main"
         branchSpec = "+:refs/heads/*"
         checkoutMode = CheckoutMode.ON_SERVER
@@ -79,8 +82,8 @@ project {
                     echo "Running code quality checks..."
                     source venv/bin/activate
                     pip install flake8 black
-                    flake8 sample-project/ --max-line-length=100 --exclude=venv
-                    black --check sample-project/
+                    flake8 teamOKITO/ --max-line-length=100 --exclude=venv
+                    black --check teamOKITO/
                     echo "Code quality checks completed"
                 """.trimIndent()
                 scriptExecMode = BuildStep.ExecutionMode.RUN_ON_FAILURE
@@ -112,6 +115,13 @@ project {
                     notifyBuildFailure = true
                 }
             }
+        }
+        
+        // Parameters
+        params {
+            param("PYTHON_VERSION", "3.9")
+            param("TEST_TIMEOUT", "300")
+            param("CODE_QUALITY_ENABLED", "true")
         }
         
         // Failure Conditions
@@ -169,8 +179,8 @@ project {
                     mkdir -p build
                     
                     # Copy application files
-                    cp -r sample-project/* build/
-                    cp requirements.txt build/
+                    cp -r teamOKITO/* build/
+                    cp teamOKITO/requirements.txt build/
                     
                     # Create deployment package
                     cd build
@@ -292,8 +302,8 @@ project {
                     
                     # Create deployment package
                     mkdir -p deploy
-                    cp -r sample-project/* deploy/
-                    cp requirements.txt deploy/
+                    cp -r teamOKITO/* deploy/
+                    cp teamOKITO/requirements.txt deploy/
                     
                     # Add render.yaml for Render configuration
                     cat > deploy/render.yaml << EOF
