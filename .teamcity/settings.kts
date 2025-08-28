@@ -147,11 +147,19 @@ object FullCiCdPipeline : BuildType({
             perCheckinTriggering = true
             quietPeriodMode = QuietPeriodMode.DO_NOT_USE
         }
+        
+        // Webhook trigger for instant builds during demo
+        webhook {
+            name = "GitHub Webhook"
+            url = "webhook"
+            enabled = true
+        }
     }
     
     params {
         param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ni6i7fte5s739g34q0?key=hLoCv29o1Ew")
         param("DEPLOYMENT_ENVIRONMENT", "production")
+        param("webhook.url", "webhook")
     }
     
     failureConditions {
