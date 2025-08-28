@@ -7,7 +7,7 @@ version = "2025.07"
 
 project {
     name = "TeamOKITO"
-    description = "Single build pipeline: Test → Build → Deploy to Render"
+    description = "Configuration as Code Demo - Single CI/CD Pipeline"
     
     vcsRoot(GitRepo)
     buildType(FullCiCdPipeline)
@@ -18,7 +18,6 @@ object GitRepo : GitVcsRoot({
     url = "https://github.com/ptokito/teamOKITO.git"
     branch = "refs/heads/main"
     branchSpec = "+:refs/heads/*"
-    param("intervalSeconds", "60")  // Fixed: Use correct parameter name
 })
 
 object FullCiCdPipeline : BuildType({
@@ -33,7 +32,6 @@ object FullCiCdPipeline : BuildType({
     }
     
     steps {
-        // Step 1: Setup Environment
         script {
             name = "1. Setup Python Environment"
             scriptContent = """
@@ -47,9 +45,8 @@ object FullCiCdPipeline : BuildType({
             """.trimIndent()
         }
         
-        // Step 2: Run Tests (Optional)
         script {
-            name = "2. Run Tests (Skip if None)"
+            name = "2. Run Tests"
             scriptContent = """
                 #!/bin/bash
                 echo "=== STEP 2: Running tests ==="
@@ -65,7 +62,6 @@ object FullCiCdPipeline : BuildType({
             """.trimIndent()
         }
         
-        // Step 3: Test Application Startup
         script {
             name = "3. Test Application Startup"
             scriptContent = """
@@ -88,7 +84,6 @@ object FullCiCdPipeline : BuildType({
             """.trimIndent()
         }
         
-        // Step 4: Build Application
         script {
             name = "4. Build Application Package"
             scriptContent = """
@@ -107,7 +102,6 @@ object FullCiCdPipeline : BuildType({
             """.trimIndent()
         }
         
-        // Step 5: Deploy to Render
         script {
             name = "5. Deploy to Render"
             scriptContent = """
@@ -144,7 +138,6 @@ object FullCiCdPipeline : BuildType({
             branchFilter = "+:refs/heads/main"
             groupCheckinsByCommitter = true
             perCheckinTriggering = true
-            // Fixed: Removed QuietPeriodMode reference - use default behavior
         }
     }
     
