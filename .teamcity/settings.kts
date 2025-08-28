@@ -7,7 +7,7 @@ version = "2023.05"
 
 project {
     name = "TeamOKITO"
-    description = "Single build pipeline: Test → Build → Deploy to Render"
+    description = "Single build pipeline: Test → Build → Deploy to Render - Force refresh"
     
     vcsRoot(GitRepo)
     buildType(FullCiCdPipeline)
