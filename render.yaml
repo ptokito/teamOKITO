@@ -1,5 +1,5 @@
 
-oservices:
+services:
   - type: web
     name: teamOKITO
     env: python
