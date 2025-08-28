@@ -2,7 +2,6 @@ import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.triggers.*
 import jetbrains.buildServer.configs.kotlin.vcs.*
-import jetbrains.buildServer.configs.kotlin.triggers.QuietPeriodMode
 
 version = "2025.07"
 
@@ -19,7 +18,7 @@ object GitRepo : GitVcsRoot({
     url = "https://github.com/ptokito/teamOKITO.git"
     branch = "refs/heads/main"
     branchSpec = "+:refs/heads/*"
-    pollingInterval = 10
+    param("intervalSeconds", "60")  // Fixed: Use correct parameter name
 })
 
 object FullCiCdPipeline : BuildType({
@@ -145,21 +144,13 @@ object FullCiCdPipeline : BuildType({
             branchFilter = "+:refs/heads/main"
             groupCheckinsByCommitter = true
             perCheckinTriggering = true
-            quietPeriodMode = QuietPeriodMode.DO_NOT_USE
-        }
-        
-        // Webhook trigger for instant builds during demo
-        webhook {
-            name = "GitHub Webhook"
-            url = "webhook"
-            enabled = true
+            // Fixed: Removed QuietPeriodMode reference - use default behavior
         }
     }
     
     params {
         param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ni6i7fte5s739g34q0?key=hLoCv29o1Ew")
         param("DEPLOYMENT_ENVIRONMENT", "production")
-        param("webhook.url", "webhook")
     }
     
     failureConditions {
