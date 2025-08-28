@@ -2,12 +2,13 @@ import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.triggers.*
 import jetbrains.buildServer.configs.kotlin.vcs.*
+import jetbrains.buildServer.configs.kotlin.triggers.QuietPeriodMode
 
 version = "2025.07"
 
 project {
     name = "TeamOKITO"
-    description = "Single build pipeline: Test → Build → Deploy to Render - Fix VCS root conflict"
+    description = "Single build pipeline: Test → Build → Deploy to Render"
     
     vcsRoot(GitRepo)
     buildType(FullCiCdPipeline)
@@ -18,6 +19,7 @@ object GitRepo : GitVcsRoot({
     url = "https://github.com/ptokito/teamOKITO.git"
     branch = "refs/heads/main"
     branchSpec = "+:refs/heads/*"
+    pollingInterval = 10
 })
 
 object FullCiCdPipeline : BuildType({
@@ -143,6 +145,7 @@ object FullCiCdPipeline : BuildType({
             branchFilter = "+:refs/heads/main"
             groupCheckinsByCommitter = true
             perCheckinTriggering = true
+            quietPeriodMode = QuietPeriodMode.DO_NOT_USE
         }
     }
     
