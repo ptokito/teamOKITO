@@ -3,7 +3,7 @@ import jetbrains.buildServer.configs.kotlin.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.triggers.*
 import jetbrains.buildServer.configs.kotlin.vcs.*
 
-version = "2023.05"
+version = "2025.07"
 
 project {
     name = "TeamOKITO"
