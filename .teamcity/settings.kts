@@ -1,9 +1,15 @@
+// Required imports for TeamCity's Kotlin DSL API
+
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.*
 import jetbrains.buildServer.configs.kotlin.triggers.*
 import jetbrains.buildServer.configs.kotlin.vcs.*
 
 version = "2025.07"
+
+
+//Project Definition
+// This creates the top-level TeamCity project container
 
 project {
     name = "TeamOKITO"
@@ -12,14 +18,15 @@ project {
     vcsRoot(GitRepo)
     buildType(FullCiCdPipeline)
 }
-
+// VCS Root Definition - defines HOW TeamCity connects to source control
 object GitRepo : GitVcsRoot({
     name = "Git Repository"
     url = "https://github.com/ptokito/teamOKITO.git"
     branch = "refs/heads/main"
     branchSpec = "+:refs/heads/*"
 })
-
+// Build Configuration Definition - defines WHAT happens when a build runs
+// This creates the actual CI/CD pipeline with all steps and settings
 object FullCiCdPipeline : BuildType({
     name = "Full CI/CD Pipeline"
     description = "Complete pipeline: Test → Build → Deploy to Render"
@@ -30,7 +37,7 @@ object FullCiCdPipeline : BuildType({
         root(GitRepo)
         cleanCheckout = true
     }
-    
+    // Build steps - these execute in sequence, failing the build if any step fails
     steps {
         script {
             name = "1. Setup Python Environment"
@@ -44,7 +51,7 @@ object FullCiCdPipeline : BuildType({
                 echo "Python environment setup completed"
             """.trimIndent()
         }
-        
+        // STEP 2: Test Execution
         script {
             name = "2. Run Tests"
             scriptContent = """
@@ -61,7 +68,7 @@ object FullCiCdPipeline : BuildType({
                 echo "Test step completed"
             """.trimIndent()
         }
-        
+        // STEP 3: Application Smoke Test
         script {
             name = "3. Test Application Startup"
             scriptContent = """
@@ -83,7 +90,7 @@ object FullCiCdPipeline : BuildType({
                 fi
             """.trimIndent()
         }
-        
+        // STEP 4: Build Artifact Creation
         script {
             name = "4. Build Application Package"
             scriptContent = """
@@ -101,7 +108,8 @@ object FullCiCdPipeline : BuildType({
                 echo "Build package created: flask-app-%build.counter%.tar.gz"
             """.trimIndent()
         }
-        
+        // STEP 5: Deployment
+        // Triggers deployment to Render platform using webhook API
         script {
             name = "5. Deploy to Render"
             scriptContent = """
@@ -132,7 +140,7 @@ object FullCiCdPipeline : BuildType({
             """.trimIndent()
         }
     }
-    
+    // Trigger Configuration - defines WHEN builds should run automatically
     triggers {
         vcs {
             branchFilter = "+:refs/heads/main"
@@ -140,7 +148,7 @@ object FullCiCdPipeline : BuildType({
             perCheckinTriggering = true
         }
     }
-    
+    // Build Parameters - variables available during build execution
     params {
         param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ni6i7fte5s739g34q0?key=hLoCv29o1Ew")
         param("DEPLOYMENT_ENVIRONMENT", "production")
