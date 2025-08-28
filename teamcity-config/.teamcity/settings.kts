@@ -1,3 +1,5 @@
+// Headers and imports for Teamcity's KOTLIN DSL Classes and will define the build configuration, steps & triggers
+
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
