@@ -10,7 +10,7 @@ class BuildInfo:
     def __init__(self):
         self.build_number = os.getenv('BUILD_NUMBER', 'Local Dev')
         self.deployment_date = os.getenv('DEPLOYMENT_DATE', 'Unknown')
-        self.repository = os.getenv('REPOSITORY', 'github.com/ptokito/teamcityjava')
+        self.repository = os.getenv('REPOSITORY', 'github.com/ptokito/teamOKITO')
         self.configuration = os.getenv('CONFIGURATION', '.teamcity/settings.kts')
 
 class PipelineStep:
@@ -89,7 +89,7 @@ def get_configuration():
                 {
                     "id": "GitRepo",
                     "name": "Git Repository",
-                    "url": "https://github.com/ptokito/teamcityjava"
+                    "url": "https://github.com/ptokito/teamOKITO"
                 }
             ]
         }
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     # Set environment variables for demo purposes
     os.environ['BUILD_NUMBER'] = os.getenv('BUILD_NUMBER', 'Local Dev')
     os.environ['DEPLOYMENT_DATE'] = os.getenv('DEPLOYMENT_DATE', datetime.now().strftime("%Y-%m-%d %H:%M:%S UTC"))
-    os.environ['REPOSITORY'] = os.getenv('REPOSITORY', 'github.com/ptokito/teamcityjava')
+    os.environ['REPOSITORY'] = os.getenv('REPOSITORY', 'github.com/ptokito/teamOKITO')
     os.environ['CONFIGURATION'] = os.getenv('CONFIGURATION', '.teamcity/settings.kts')
 
     app.run(debug=True, host='0.0.0.0', port=5000)

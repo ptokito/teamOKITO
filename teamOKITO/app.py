@@ -10,7 +10,7 @@ class BuildInfo:
     def __init__(self):
         self.build_number = os.getenv('BUILD_NUMBER', 'Local Dev')
         self.deployment_date = os.getenv('DEPLOYMENT_DATE', 'Unknown')
-        self.repository = os.getenv('REPOSITORY', 'github.com/ptokito/teamcityjava')
+        self.repository = os.getenv('REPOSITORY', 'github.com/ptokito/teamOKITO')
         self.configuration = os.getenv('CONFIGURATION', '.teamcity/settings.kts')
 
 
@@ -93,7 +93,7 @@ def get_configuration():
                 {
                     "id": "GitRepo",
                     "name": "Git Repository",
-                    "url": "https://github.com/ptokito/teamcityjava"
+                    "url": "https://github.com/ptokito/teamOKITO"
                 }
             ]
         }
