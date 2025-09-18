@@ -150,7 +150,7 @@ object FullCiCdPipeline : BuildType({
     }
     // Build Parameters - variables available during build execution
     params {
-        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ni6i7fte5s739g34q0?key=hLoCv29o1Ew")
+        param("env.RENDER_DEPLOY_HOOK", "https://api.render.com/deploy/srv-d2ltti7diees73cbo5h0?key=K7rSQMB44Ps")
         param("DEPLOYMENT_ENVIRONMENT", "production")
     }
     
